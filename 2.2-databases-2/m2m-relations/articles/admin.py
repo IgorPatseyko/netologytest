@@ -5,11 +5,6 @@ from django.forms import BaseInlineFormSet
 from .models import Article, Tag, Scope
 
 
-class ScopeInline(admin.TabularInline):
-    model = Scope
-    extra = 0
-
-
 class ScopeInlineFormset(BaseInlineFormSet):
     def clean(self):
         i = 0
@@ -26,6 +21,12 @@ class ScopeInlineFormset(BaseInlineFormSet):
         if i > 1:
             raise ValidationError('Основной раздел может быть только один')
         return super().clean()  # вызываем базовый код переопределяемого метода
+
+
+class ScopeInline(admin.TabularInline):
+    model = Scope
+    extra = 0
+    formset = ScopeInlineFormset
 
 
 @admin.register(Article)
