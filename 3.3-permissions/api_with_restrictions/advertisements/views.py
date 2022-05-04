@@ -1,6 +1,7 @@
 from django_filters import DateFromToRangeFilter
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
 
 from advertisements.filters import AdvertisementFilter
@@ -17,8 +18,9 @@ class AdvertisementViewSet(ModelViewSet):
     # TODO: настройте ViewSet, укажите атрибуты для кверисета,
     #   сериализаторов и фильтров
 
-    filterset_class = AdvertisementFilter
+
     filter_backends = [DjangoFilterBackend]
+    filterset_class = AdvertisementFilter
     # filterset_fields = ['creator', ]
 
     def get_permissions(self):
