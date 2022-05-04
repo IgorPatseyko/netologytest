@@ -1,5 +1,6 @@
 from django.conf import settings
 from django.db import models
+from rest_framework.authtoken.admin import User
 
 
 class AdvertisementStatusChoices(models.TextChoices):
@@ -19,7 +20,7 @@ class Advertisement(models.Model):
         default=AdvertisementStatusChoices.OPEN
     )
     creator = models.ForeignKey(
-        settings.AUTH_USER_MODEL,
+        User,
         on_delete=models.CASCADE,
     )
     created_at = models.DateTimeField(
