@@ -40,9 +40,14 @@ class AdvertisementSerializer(serializers.ModelSerializer):
         """Метод для валидации. Вызывается при создании и обновлении."""
 
         max_open_advs = 10
-        if self.context["request"].method in ['POST']:
-            if Advertisement.objects.filter(creator=self.context["request"].user, status=AdvertisementStatusChoices.OPEN).count() >= max_open_advs:
+        opened_advs = Advertisement.objects.filter(creator=self.context["request"].user,
+                                                   status=AdvertisementStatusChoices.OPEN)
+        if opened_advs.count() >= max_open_advs:
+            if self.context["request"].method == 'PATCH' and data["status"] == AdvertisementStatusChoices.OPEN:
                 raise PermissionError(f'Превышено доступимое количество открытых объявлений ({max_open_advs})')
+            if self.context["request"].method == 'POST':
+                raise PermissionError(f'Превышено доступимое количество открытых объявлений ({max_open_advs})')
+
         # TODO: добавьте требуемую валидацию
 
         return data
