@@ -1,5 +1,6 @@
 from django.contrib.auth.models import User
 from rest_framework import serializers
+from rest_framework.exceptions import ValidationError
 
 from advertisements.models import Advertisement, AdvertisementStatusChoices
 
@@ -22,7 +23,7 @@ class AdvertisementSerializer(serializers.ModelSerializer):
     class Meta:
         model = Advertisement
         fields = ('id', 'title', 'description', 'creator',
-                  'status', 'created_at', )
+                  'status', 'created_at', 'draft')
 
     def create(self, validated_data):
         """Метод для создания"""
@@ -41,12 +42,12 @@ class AdvertisementSerializer(serializers.ModelSerializer):
 
         max_open_advs = 10
         opened_advs = Advertisement.objects.filter(creator=self.context["request"].user,
-                                                   status=AdvertisementStatusChoices.OPEN)
-        if opened_advs.count() >= max_open_advs:
+                                                   status=AdvertisementStatusChoices.OPEN).count()
+        if opened_advs >= max_open_advs:
             if self.context["request"].method == 'PATCH' and data["status"] == AdvertisementStatusChoices.OPEN:
-                raise PermissionError(f'Превышено доступимое количество открытых объявлений ({max_open_advs})')
+                raise ValidationError(f'Превышено доступимое количество открытых объявлений ({opened_advs})')
             if self.context["request"].method == 'POST':
-                raise PermissionError(f'Превышено доступимое количество открытых объявлений ({max_open_advs})')
+                raise ValidationError(f'Превышено доступимое количество открытых объявлений ({opened_advs})')
 
         # TODO: добавьте требуемую валидацию
 

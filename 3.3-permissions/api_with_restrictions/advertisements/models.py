@@ -30,3 +30,14 @@ class Advertisement(models.Model):
         auto_now=True
     )
     draft = models.BooleanField(default=False)
+    '''
+    favourite = models.ManyToManyField(
+        User,
+        related_name='favourites',
+        through='FavouriteAdvertisement'
+    )
+
+
+class FavouriteAdvertisement(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+'''
